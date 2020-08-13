@@ -1,0 +1,12 @@
+[package]
+name = "random-b64-str"
+version = "0.1.0"
+authors = ["Simon Lim Hao Wooi <zybler@gmail.com>"]
+edition = "2018"
+
+[profile.release]
+lto = true
+
+[dependencies]
+rand = "0.7.3"
+strength_reduce = "0.2.3"
