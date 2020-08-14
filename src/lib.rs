@@ -77,32 +77,37 @@ fn b10_to_b64_u128(num: u128) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::b10_to_b64_u128;
-    use crate::b10_to_b64_u64;
+    use crate::{b10_to_b64_u128,b10_to_b64_u64};
 
     #[test]
     fn b10_to_b64_u64_test() {
-        assert_eq!(b10_to_b64_u64(u64::MIN), "0".to_string());
-        assert_eq!(b10_to_b64_u64(1), "1".to_string());
-        assert_eq!(b10_to_b64_u64(63), "_".to_string());
-        assert_eq!(b10_to_b64_u64(64), "10".to_string());
-        assert_eq!(b10_to_b64_u64(u64::MAX - 1), "F_________-".to_string());
-        assert_eq!(b10_to_b64_u64(u64::MAX), "F__________".to_string());
+        let tests = &[
+            (u64::MIN, "0".to_string()),
+            (1, "1".to_string()),
+            (63, "_".to_string()),
+            (64, "10".to_string()),
+            (u64::MAX - 1, "F_________-".to_string()),
+            (u64::MAX, "F__________".to_string())
+        ];
+        for (input, want) in tests {
+            let got = b10_to_b64_u64(*input);
+            assert_eq!(got, *want);
+        }
     }
 
     #[test]
     fn b10_to_b64_u128_test() {
-        assert_eq!(b10_to_b64_u128(u128::MIN), "0".to_string());
-        assert_eq!(b10_to_b64_u128(1), "1".to_string());
-        assert_eq!(b10_to_b64_u128(63), "_".to_string());
-        assert_eq!(b10_to_b64_u128(64), "10".to_string());
-        assert_eq!(
-            b10_to_b64_u128(u128::MAX - 1),
-            "3____________________-".to_string()
-        );
-        assert_eq!(
-            b10_to_b64_u128(u128::MAX),
-            "3_____________________".to_string()
-        );
+        let tests = &[
+            (u128::MIN, "0".to_string()),
+            (1, "1".to_string()),
+            (63, "_".to_string()),
+            (64, "10".to_string()),
+            (u128::MAX - 1, "3____________________-".to_string()),
+            (u128::MAX, "3_____________________".to_string())
+        ];
+        for (input, want) in tests {
+            let got = b10_to_b64_u128(*input);
+            assert_eq!(got, *want);
+        }
     }
 }
