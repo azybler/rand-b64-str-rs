@@ -25,210 +25,54 @@ const BASE64_CHARSET: &[u8] = b"0123456789\
 
 #[inline(always)]
 fn b10_to_b64_u64(num: u64) -> String {
-    let sr_281_474_976_710_656: StrengthReducedU64 = StrengthReducedU64::new(281_474_976_710_656);
-    let sr_4_398_046_511_104: StrengthReducedU64 = StrengthReducedU64::new(4_398_046_511_104);
-    let sr_68_719_476_736: StrengthReducedU64 = StrengthReducedU64::new(68_719_476_736);
-    let sr_1_073_741_824: StrengthReducedU64 = StrengthReducedU64::new(1_073_741_824);
-    let sr_16_777_216: StrengthReducedU64 = StrengthReducedU64::new(16_777_216);
     let sr_262_144: StrengthReducedU64 = StrengthReducedU64::new(262_144);
     let sr_4_096: StrengthReducedU64 = StrengthReducedU64::new(4_096);
     let sr_64: StrengthReducedU64 = StrengthReducedU64::new(64);
     let mut _n = num;
-    let mut res: String = "".to_string();
-    while _n >= 281_474_976_710_656 {
-        res = format!(
-            "{}{}{}{}{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_4_398_046_511_104 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_68_719_476_736 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_1_073_741_824 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_16_777_216 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_281_474_976_710_656;
-    }
-    while _n >= 4_398_046_511_104 {
-        res = format!(
-            "{}{}{}{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_68_719_476_736 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_1_073_741_824 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_16_777_216 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_4_398_046_511_104;
-    }
-    while _n >= 68_719_476_736 {
-        res = format!(
-            "{}{}{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_1_073_741_824 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_16_777_216 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_68_719_476_736;
-    }
-    while _n >= 1_073_741_824 {
-        res = format!(
-            "{}{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_16_777_216 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_1_073_741_824;
-    }
-    while _n >= 16_777_216 {
-        res = format!(
-            "{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_16_777_216;
-    }
+    let mut vec: Vec<char> = Vec::with_capacity(11);
     while _n >= 262_144 {
-        res = format!(
-            "{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
+        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
+        vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
+        vec.push(BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char);
         _n = _n / sr_262_144;
     }
-    while _n >= 4096 {
-        res = format!(
-            "{}{}{}",
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
+    while _n >= 4_096 {
+        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
+        vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
         _n = _n / sr_4_096;
     }
     while _n >= 64 {
-        res = format!("{}{}", BASE64_CHARSET[(_n % sr_64) as usize] as char, res);
+        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
         _n = _n / sr_64;
     }
-    res = format!("{}{}", BASE64_CHARSET[_n as usize] as char, res);
-    return res;
+    vec.push(BASE64_CHARSET[_n as usize] as char);
+    vec.iter().cloned().rev().collect::<String>()
 }
 
 #[inline(always)]
 fn b10_to_b64_u128(num: u128) -> String {
-    let sr_281_474_976_710_656: StrengthReducedU128 = StrengthReducedU128::new(281_474_976_710_656);
-    let sr_4_398_046_511_104: StrengthReducedU128 = StrengthReducedU128::new(4_398_046_511_104);
-    let sr_68_719_476_736: StrengthReducedU128 = StrengthReducedU128::new(68_719_476_736);
-    let sr_1_073_741_824: StrengthReducedU128 = StrengthReducedU128::new(1_073_741_824);
-    let sr_16_777_216: StrengthReducedU128 = StrengthReducedU128::new(16_777_216);
     let sr_262_144: StrengthReducedU128 = StrengthReducedU128::new(262_144);
     let sr_4_096: StrengthReducedU128 = StrengthReducedU128::new(4_096);
     let sr_64: StrengthReducedU128 = StrengthReducedU128::new(64);
     let mut _n = num;
-    let mut res: String = "".to_string();
-    while _n >= 281_474_976_710_656 {
-        res = format!(
-            "{}{}{}{}{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_4_398_046_511_104 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_68_719_476_736 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_1_073_741_824 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_16_777_216 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_281_474_976_710_656;
-    }
-    while _n >= 4_398_046_511_104 {
-        res = format!(
-            "{}{}{}{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_68_719_476_736 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_1_073_741_824 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_16_777_216 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_4_398_046_511_104;
-    }
-    while _n >= 68_719_476_736 {
-        res = format!(
-            "{}{}{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_1_073_741_824 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_16_777_216 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_68_719_476_736;
-    }
-    while _n >= 1_073_741_824 {
-        res = format!(
-            "{}{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_16_777_216 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_1_073_741_824;
-    }
-    while _n >= 16_777_216 {
-        res = format!(
-            "{}{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_262_144 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
-        _n = _n / sr_16_777_216;
-    }
+    let mut vec: Vec<char> = Vec::with_capacity(22);
     while _n >= 262_144 {
-        res = format!(
-            "{}{}{}{}",
-            BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
+        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
+        vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
+        vec.push(BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char);
         _n = _n / sr_262_144;
     }
-    while _n >= 4096 {
-        res = format!(
-            "{}{}{}",
-            BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char,
-            BASE64_CHARSET[(_n % sr_64) as usize] as char,
-            res,
-        );
+    while _n >= 4_096 {
+        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
+        vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
         _n = _n / sr_4_096;
     }
     while _n >= 64 {
-        res = format!("{}{}", BASE64_CHARSET[(_n % sr_64) as usize] as char, res);
+        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
         _n = _n / sr_64;
     }
-    res = format!("{}{}", BASE64_CHARSET[_n as usize] as char, res);
-    return res;
+    vec.push(BASE64_CHARSET[_n as usize] as char);
+    vec.iter().cloned().rev().collect::<String>()
 }
 
 #[cfg(test)]
@@ -242,6 +86,7 @@ mod tests {
         assert_eq!(b10_to_b64_u64(1), "1".to_string());
         assert_eq!(b10_to_b64_u64(63), "_".to_string());
         assert_eq!(b10_to_b64_u64(64), "10".to_string());
+        assert_eq!(b10_to_b64_u64(u64::MAX - 1), "F_________-".to_string());
         assert_eq!(b10_to_b64_u64(u64::MAX), "F__________".to_string());
     }
 
@@ -251,6 +96,10 @@ mod tests {
         assert_eq!(b10_to_b64_u128(1), "1".to_string());
         assert_eq!(b10_to_b64_u128(63), "_".to_string());
         assert_eq!(b10_to_b64_u128(64), "10".to_string());
+        assert_eq!(
+            b10_to_b64_u128(u128::MAX - 1),
+            "3____________________-".to_string()
+        );
         assert_eq!(
             b10_to_b64_u128(u128::MAX),
             "3_____________________".to_string()
