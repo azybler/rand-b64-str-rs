@@ -77,7 +77,7 @@ fn b10_to_b64_u128(num: u128) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::{b10_to_b64_u128,b10_to_b64_u64};
+    use crate::{b10_to_b64_u128, b10_to_b64_u64};
 
     #[test]
     fn b10_to_b64_u64_test() {
@@ -87,7 +87,7 @@ mod tests {
             (63, "_".to_string()),
             (64, "10".to_string()),
             (u64::MAX - 1, "F_________-".to_string()),
-            (u64::MAX, "F__________".to_string())
+            (u64::MAX, "F__________".to_string()),
         ];
         for (input, want) in tests {
             let got = b10_to_b64_u64(*input);
@@ -103,7 +103,7 @@ mod tests {
             (63, "_".to_string()),
             (64, "10".to_string()),
             (u128::MAX - 1, "3____________________-".to_string()),
-            (u128::MAX, "3_____________________".to_string())
+            (u128::MAX, "3_____________________".to_string()),
         ];
         for (input, want) in tests {
             let got = b10_to_b64_u128(*input);

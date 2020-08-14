@@ -1,8 +1,13 @@
 [package]
-name = "random-b64-str"
+description = "This rust library provides a function to generate a random base-64 string from a random unsigned 128-bit integer."
+name = "rand-b64-str"
 version = "0.1.0"
 authors = ["Simon Lim Hao Wooi <zybler@gmail.com>"]
 edition = "2018"
+license = "MIT/Apache-2.0"
+readme = "READMe.md"
+repository = "https://github.com/azybler/rand-b64-str-rs"
+homepage = "https://github.com/azybler/rand-b64-str-rs"
 
 [profile.release]
 lto = true
