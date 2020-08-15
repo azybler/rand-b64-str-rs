@@ -46,7 +46,7 @@ fn b10_to_b64_u64(num: u64) -> String {
         _n = _n / sr_64;
     }
     vec.push(BASE64_CHARSET[_n as usize] as char);
-    vec.iter().cloned().rev().collect::<String>()
+    vec.iter().rev().collect::<String>()
 }
 
 #[inline(always)]
@@ -72,7 +72,7 @@ fn b10_to_b64_u128(num: u128) -> String {
         _n = _n / sr_64;
     }
     vec.push(BASE64_CHARSET[_n as usize] as char);
-    vec.iter().cloned().rev().collect::<String>()
+    vec.iter().rev().collect::<String>()
 }
 
 #[cfg(test)]
