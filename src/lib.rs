@@ -25,9 +25,9 @@ const BASE64_CHARSET: &[u8] = b"0123456789\
 
 #[inline(always)]
 fn b10_to_b64_u64(num: u64) -> String {
-    let sr_262_144: StrengthReducedU64 = StrengthReducedU64::new(262_144);
-    let sr_4_096: StrengthReducedU64 = StrengthReducedU64::new(4_096);
-    let sr_64: StrengthReducedU64 = StrengthReducedU64::new(64);
+    let sr_262_144 = StrengthReducedU64::new(262_144);
+    let sr_4_096 = StrengthReducedU64::new(4_096);
+    let sr_64 = StrengthReducedU64::new(64);
     let mut _n = num;
     let mut vec: Vec<char> = Vec::with_capacity(11);
     while _n >= 262_144 {
@@ -51,9 +51,9 @@ fn b10_to_b64_u64(num: u64) -> String {
 
 #[inline(always)]
 fn b10_to_b64_u128(num: u128) -> String {
-    let sr_262_144: StrengthReducedU128 = StrengthReducedU128::new(262_144);
-    let sr_4_096: StrengthReducedU128 = StrengthReducedU128::new(4_096);
-    let sr_64: StrengthReducedU128 = StrengthReducedU128::new(64);
+    let sr_262_144 = StrengthReducedU128::new(262_144);
+    let sr_4_096 = StrengthReducedU128::new(4_096);
+    let sr_64 = StrengthReducedU128::new(64);
     let mut _n = num;
     let mut vec: Vec<char> = Vec::with_capacity(22);
     while _n >= 262_144 {
