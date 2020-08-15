@@ -2,85 +2,74 @@ use rand::Rng;
 use strength_reduce::StrengthReducedU128;
 use strength_reduce::StrengthReducedU64;
 
-#[allow(dead_code)]
-#[inline(always)]
-pub fn get_u64() -> String {
-    let mut rng = rand::thread_rng();
-    let num: u64 = rng.gen::<u64>();
-    b10_to_b64_u64(num)
-}
-
-#[allow(dead_code)]
-#[inline(always)]
-pub fn get_u128() -> String {
-    let mut rng = rand::thread_rng();
-    let num: u128 = rng.gen::<u128>();
-    b10_to_b64_u128(num)
-}
-
 const BASE64_CHARSET: &[u8] = b"0123456789\
                                 ABCDEFGHIJKLMNOPQRSTUVWXYZ\
                                 abcdefghijklmnopqrstuvwxyz\
                                 -_";
 
-#[inline(always)]
-fn b10_to_b64_u64(num: u64) -> String {
-    let sr_262_144 = StrengthReducedU64::new(262_144);
-    let sr_4_096 = StrengthReducedU64::new(4_096);
-    let sr_64 = StrengthReducedU64::new(64);
-    let mut _n = num;
-    let mut vec: Vec<char> = Vec::with_capacity(11);
-    while _n >= 262_144 {
-        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
-        vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
-        vec.push(BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char);
-        _n = _n / sr_262_144;
-    }
-    while _n >= 4_096 {
-        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
-        vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
-        _n = _n / sr_4_096;
-    }
-    while _n >= 64 {
-        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
-        _n = _n / sr_64;
-    }
-    vec.push(BASE64_CHARSET[_n as usize] as char);
-    vec.iter().rev().collect::<String>()
+macro_rules! b10_to_b64 {
+    ($input: expr, $b: expr, $sr: path) => {
+        {
+            let sr_262_144 = $sr(262_144);
+            let sr_4_096 = $sr(4_096);
+            let sr_64 = $sr(64);
+
+            let mut _n = $input;
+            let mut vec: Vec<char> = Vec::with_capacity($b);
+            while _n >= 262_144 {
+                vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
+                vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
+                vec.push(BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char);
+                _n = _n / sr_262_144;
+            }
+            while _n >= 4_096 {
+                vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
+                vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
+                _n = _n / sr_4_096;
+            }
+            while _n >= 64 {
+                vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
+                _n = _n / sr_64;
+            }
+            vec.push(BASE64_CHARSET[_n as usize] as char);
+            vec.iter().rev().collect::<String>()
+        }
+    };
 }
 
+macro_rules! get {
+    ($type: ty, $b: expr, $sr: path) => {
+        {
+            let mut rng = rand::thread_rng();
+            let num: $type = rng.gen::<$type>();
+            b10_to_b64!(num, $b, $sr)
+        }
+    };
+}
+
+#[allow(dead_code)]
 #[inline(always)]
-fn b10_to_b64_u128(num: u128) -> String {
-    let sr_262_144 = StrengthReducedU128::new(262_144);
-    let sr_4_096 = StrengthReducedU128::new(4_096);
-    let sr_64 = StrengthReducedU128::new(64);
-    let mut _n = num;
-    let mut vec: Vec<char> = Vec::with_capacity(22);
-    while _n >= 262_144 {
-        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
-        vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
-        vec.push(BASE64_CHARSET[(_n / sr_4_096 % sr_64) as usize] as char);
-        _n = _n / sr_262_144;
-    }
-    while _n >= 4_096 {
-        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
-        vec.push(BASE64_CHARSET[(_n / sr_64 % sr_64) as usize] as char);
-        _n = _n / sr_4_096;
-    }
-    while _n >= 64 {
-        vec.push(BASE64_CHARSET[(_n % sr_64) as usize] as char);
-        _n = _n / sr_64;
-    }
-    vec.push(BASE64_CHARSET[_n as usize] as char);
-    vec.iter().rev().collect::<String>()
+pub fn get_u64() -> String {
+    get!(u64, 11, StrengthReducedU64::new)
+}
+
+#[allow(dead_code)]
+#[inline(always)]
+pub fn get_u128() -> String {
+    get!(u128, 22, StrengthReducedU128::new)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{b10_to_b64_u128, b10_to_b64_u64};
+    const BASE64_CHARSET: &[u8] = b"0123456789\
+                                ABCDEFGHIJKLMNOPQRSTUVWXYZ\
+                                abcdefghijklmnopqrstuvwxyz\
+                                -_";
 
     #[test]
     fn b10_to_b64_u64_test() {
+        use strength_reduce::StrengthReducedU64;
+
         let tests = &[
             (u64::MIN, "0".to_string()),
             (1, "1".to_string()),
@@ -90,13 +79,15 @@ mod tests {
             (u64::MAX, "F__________".to_string()),
         ];
         for (input, want) in tests {
-            let got = b10_to_b64_u64(*input);
+            let got = b10_to_b64!(*input, 11, StrengthReducedU64::new);
             assert_eq!(got, *want);
         }
     }
 
     #[test]
     fn b10_to_b64_u128_test() {
+        use strength_reduce::StrengthReducedU128;
+
         let tests = &[
             (u128::MIN, "0".to_string()),
             (1, "1".to_string()),
@@ -106,7 +97,7 @@ mod tests {
             (u128::MAX, "3_____________________".to_string()),
         ];
         for (input, want) in tests {
-            let got = b10_to_b64_u128(*input);
+            let got = b10_to_b64!(*input, 22, StrengthReducedU128::new);
             assert_eq!(got, *want);
         }
     }
