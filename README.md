@@ -16,6 +16,9 @@ rand-b64-str = { git = "https://github.com/azybler/rand-b64-str-rs" }
 ```rust
 use rand_b64_str;
 
+let rand_b64_str = rand_b64_str::get_u32();
+println!("rand_b64_str: {}", rand_b64_str);
+
 let rand_b64_str = rand_b64_str::get_u64();
 println!("rand_b64_str: {}", rand_b64_str);
 
